@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tellus Bot</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script type = "text/javascript" scr="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" ></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+<script type = "text/javascript" scr="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" ></script>
+<link rel="stylesheet" href="res/styles.css">
+</head>
+<body>
+    <div class="container d-flex justify-content-center">
+        <div class="card mt-5">
+            <div class="d-flex flex-row justify-content-between p-3 adiv text-white"> 
+                <span class="pb-3">Tellus Bot</span> 
+                <i class="fas fa-times close-chat"></i> 
+            </div>
+            <div class="chat-body" id="chat-body">
+                <div class="d-flex flex-row p-3"> <img src="res/bot-icon.png" width="30" height="30">
+                    <div class="chat ml-2 p-3">Hello I'm Tellus bot. How can I help you?</div>
+                </div>
+            </div>
+            <div class="form-group px-3"> <textarea id="chat-box" class="form-control" rows="5" placeholder="Type your message"></textarea> </div>
+        </div>
+        <img class="bot-icon" src="res/bot-icon.png" width="70">
+    </div>
+
+    <script src="res/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $(document).on("keypress", '#chat-box', function(event) {                
+                if(event.which == 13) {
+                    chatText = $("#chat-box").val();
+                    $("#chat-body").append('<div class="d-flex flex-row p-3"><div class="bg-white mr-2 p-3"><span class="text-muted">' + chatText + '</span></div><img src="res/me.png" width="30" height="30"></div>');
+                    $("#chat-box").val('');
+                    $("#chat-body").animate({ scrollTop: $('#chat-body').prop("scrollHeight")}, 1000);
+                    $.ajax
+                    ({
+                        type: "POST",
+                        url: "bot_class/ask/",
+                        dataType: 'json',
+                        data : JSON.stringify({ chat_text: chatText }),
+                        contentType : 'application/json',
+                        success: function (data) {                            
+                            $("#chat-body").append('<div class="d-flex flex-row p-3"><img src="res/bot-icon.png" width="30" height="30"><div class="chat ml-2 p-3">' + data.response + '</div></div>');
+                        }
+                    });                    
+                    return false;
+                }
+            });
+            $(document).on("click", '.close-chat', function(event) {
+                $(".card").hide();
+                $(".bot-icon").show();
+            });
+            $(document).on("click", '.bot-icon', function(event) {
+                $(".card").show();
+                $(".bot-icon").hide();
+            });
+        });
+    </script>
+</body>
+</html>
